@@ -8,7 +8,7 @@ project. From the class dependencies, the jar level dependencies are found. This
 ## Goals
 
 There are two goals: [main](https://chonton.github.io/dependency-check-maven-plugin/main-mojo.html) checks the main 
-target classes; and [test](https://chonton.github.io/dependency-check-maven-plugin/local-mojo.html) checks the test
+target classes; and [test](https://chonton.github.io/dependency-check-maven-plugin/test-mojo.html) checks the test
 target classes.
 
 Mojo details at [plugin info](https://chonton.github.io/dependency-check-maven-plugin/plugin-info.html)

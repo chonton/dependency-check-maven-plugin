@@ -6,15 +6,16 @@
   <groupId>org.honton.chas</groupId>
   <artifactId>dependency-check-maven-plugin</artifactId>
 
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <packaging>maven-plugin</packaging>
 
   <name>Dependency Check Maven Plugin</name>
-  <description>Strict checks to ensure dependencies are properly defined</description>
 
-  <url>https://github.com/chonton/dependency-check-maven-plugin</url>
+  <description>Strict checks to ensure dependencies are properly defined</description>
+  <url>https://github.com/chonton/${project.artifactId}</url>
   <inceptionYear>2022</inceptionYear>
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -35,16 +36,16 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:git:git://github.com/chonton/dependency-check-maven-plugin</connection>
-    <developerConnection>scm:git:git@github.com:chonton/dependency-check-maven-plugin</developerConnection>
-    <url>https://github.com/chonton/dependency-check-maven-plugin</url>
+    <connection>scm:git:git://github.com/chonton/${project.artifactId}</connection>
+    <developerConnection>scm:git:git@github.com:chonton/${project.artifactId}</developerConnection>
+    <url>https://github.com/chonton/${project.artifactId}</url>
   </scm>
 
   <distributionManagement>
 
     <repository>
       <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
 
     <snapshotRepository>
@@ -54,7 +55,7 @@
 
     <site>
       <id>github</id>
-      <url>https://chonton.github.com/dependency-check-maven-plugin/${project.version}</url>
+      <url>https://chonton.github.com/${project.artifactId}</url>
     </site>
 
   </distributionManagement>
@@ -168,6 +169,7 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.24</version>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
@@ -175,20 +177,6 @@
   <build>
     <pluginManagement>
       <plugins>
-
-        <plugin>
-          <groupId>com.github.github</groupId>
-          <artifactId>site-maven-plugin</artifactId>
-          <version>0.12</version>
-          <configuration>
-            <merge>true</merge>
-            <message>Site documentation</message>
-            <path>${project.version}</path>
-            <repositoryName>exists-maven-plugin</repositoryName>
-            <repositoryOwner>chonton</repositoryOwner>
-            <server>github</server>
-          </configuration>
-        </plugin>
 
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
@@ -232,13 +220,7 @@
 
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.6.0</version>
-          <configuration>
-            <extractors>
-              <extractor>java-annotations</extractor>
-            </extractors>
-            <goalPrefix>dependency-check</goalPrefix>
-          </configuration>
+          <version>3.6.4</version>
         </plugin>
 
         <plugin>
@@ -249,6 +231,11 @@
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.0.2</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-scm-publish-plugin</artifactId>
+          <version>3.1.0</version>
         </plugin>
 
         <plugin>
@@ -302,6 +289,12 @@
 
       <plugin>
         <artifactId>maven-plugin-plugin</artifactId>
+        <configuration>
+          <extractors>
+            <extractor>java-annotations</extractor>
+          </extractors>
+          <goalPrefix>dependency-check</goalPrefix>
+        </configuration>
         <executions>
           <execution>
             <id>default-descriptor</id>
@@ -316,15 +309,30 @@
         </executions>
       </plugin>
 
+      <!-- publish site with 'mvn site-deploy' -->
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.8</version>
-        <extensions>true</extensions>
+        <artifactId>maven-scm-publish-plugin</artifactId>
         <configuration>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-          <serverId>ossrh</serverId>
+          <content>${project.reporting.outputDirectory}</content>
+          <pubScmUrl>scm:git:git@github.com:chonton/${project.artifactId}.git</pubScmUrl>
+          <scmBranch>gh-pages</scmBranch>
+          <tryUpdate>true</tryUpdate>
+        </configuration>
+        <executions>
+          <execution>
+            <id>scm-publish</id>
+            <goals>
+              <goal>publish-scm</goal>
+            </goals>
+            <phase>site-deploy</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <skipDeploy>true</skipDeploy>
         </configuration>
       </plugin>
 
@@ -360,32 +368,6 @@
   </reporting>
 
   <profiles>
-
-    <!-- publish site to GitHub,
-    1. mvn [clean install] site
-    2. mvn -P gh-pages pre-site
-    -->
-    <profile>
-      <id>gh-pages</id>
-      <build>
-        <plugins>
-          <!-- push stage to GitHub gh-pages -->
-          <plugin>
-            <groupId>com.github.github</groupId>
-            <artifactId>site-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>site</goal>
-                </goals>
-                <phase>pre-site</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
     <!-- release to maven central
     mvn clean deploy -P release
     -->
@@ -435,6 +417,12 @@
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
             <version>1.6.13</version>
+            <extensions>true</extensions>
+            <configuration>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <serverId>ossrh</serverId>
+            </configuration>
           </plugin>
 
         </plugins>
