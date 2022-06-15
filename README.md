@@ -7,16 +7,18 @@ project. From the class dependencies, the jar level dependencies are found. This
 
 ## Goals
 
-There are two goals: [main](https://chonton.github.io/dependency-check-maven-plugin/main-mojo.html) checks the main 
-target classes; and [test](https://chonton.github.io/dependency-check-maven-plugin/test-mojo.html) checks the test
+There are two goals: [main](https://chonton.github.io/dependency-check-maven-plugin/main-mojo.html)
+checks the main target classes; and
+[test](https://chonton.github.io/dependency-check-maven-plugin/test-mojo.html) checks the test
 target classes.
 
-Mojo details at [plugin info](https://chonton.github.io/dependency-check-maven-plugin/plugin-info.html)
+Mojo details
+at [plugin info](https://chonton.github.io/dependency-check-maven-plugin/plugin-info.html)
 
 ## Parameters
 
-The followings parameters can be set with a maven property **dependency-check.**_<parameter_name\>_. e.g. skip 
-parameter can be set from command line -D dependency-check.skip=true
+The followings parameters can be set with a maven property **dependency-check.**_<parameter_name\>_.
+e.g. skip parameter can be set from command line -D dependency-check.skip=true
 
 | Parameter           | Default | Description                                         |
 |---------------------|---------|-----------------------------------------------------|
@@ -43,7 +45,7 @@ as an implicit wildcard.
 - Maven 3.5 or later
 - Java 11 or later
 
-## Typical Use
+## Typical Maven Use
 
 ```xml
 
@@ -59,12 +61,26 @@ as an implicit wildcard.
           <id>check-main-dependencies</id>
           <goals>
             <goal>main</goal>
-            <goal>remote</goal>
           </goals>
           <configuration>
             <ignoreUnusedDeclaredDependencies>
               <dependency>org.slf4j:slf4j-api</dependency>
-            </ignoredUnusedDeclaredDependencies>
+            </ignoreUnusedDeclaredDependencies>
+          </configuration>
+        </execution>
+        <execution>
+          <id>check-test-dependencies</id>
+          <goals>
+            <goal>test</goal>
+          </goals>
+          <configuration>
+            <ignoreUnusedDeclaredDependencies>
+              <dependency>io.quarkus:quarkus-junit5*</dependency>
+              <dependency>org.awaitility:awaitility</dependency>
+              <dependency>org.junit.jupiter</dependency>
+              <dependency>org.mockito:mockito-*</dependency>
+              <dependency>org.mock-server:mockserver-*</dependency>
+            </ignoreUnusedDeclaredDependencies>
           </configuration>
         </execution>
       </executions>
@@ -72,4 +88,10 @@ as an implicit wildcard.
 
   </plugins>
 </build>
+```
+
+## Typical command line use
+
+```shell
+mvn org.honton.chas:dependency-check-maven-plugin:1.0.0:main
 ```
