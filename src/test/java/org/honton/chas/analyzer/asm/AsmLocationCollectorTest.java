@@ -34,8 +34,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class AsmLocationCollectorTest {
   @Mock Log log;
   private Path path;
@@ -76,9 +81,11 @@ class AsmLocationCollectorTest {
     ba[50] = 1;
     Files.write(path, ba);
     LocationCollector analyzer = new AsmLocationCollector();
+    analyzer.list(path, log);
 
-    ZipException e = Assertions.assertThrows(ZipException.class, () -> analyzer.list(path, log));
-    Assertions.assertTrue(e.getMessage().startsWith("Cannot process Jar entry on URL:"));
+    ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+    Mockito.verify(log).warn(messageCaptor.capture());
+    Assertions.assertTrue(messageCaptor.getValue().startsWith("Could not list "));
   }
 
   private void addZipEntry(JarOutputStream out, String fileName, String content)
