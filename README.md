@@ -55,7 +55,7 @@ as an implicit wildcard.
     <plugin>
       <groupId>org.honton.chas</groupId>
       <artifactId>dependency-check-maven-plugin</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
       <executions>
         <execution>
           <id>check-main-dependencies</id>
@@ -93,5 +93,5 @@ as an implicit wildcard.
 ## Typical command line use
 
 ```shell
-mvn org.honton.chas:dependency-check-maven-plugin:1.0.0:main
+mvn org.honton.chas:dependency-check-maven-plugin:1.0.1:main
 ```

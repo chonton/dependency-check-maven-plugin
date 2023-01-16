@@ -1,6 +1,7 @@
 package org.honton.chas.dependency.analyzescope;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -69,6 +70,11 @@ public class AnalyzeTestMojo extends AbstractAnalyzeScopeMojo {
   @Override
   Collection<Artifact> impliedArtifacts() {
     Artifact mainArtifact = project.getArtifact();
+    File mainClasses= mainArtifact.getFile();
+    if (mainClasses == null || !mainClasses.exists()) {
+      getLog().info("No main classes directory");
+      return Collections.singletonList(testArtifact);
+    }
     return Arrays.asList(mainArtifact, testArtifact);
   }
 
