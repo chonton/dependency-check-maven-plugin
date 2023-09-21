@@ -1,7 +1,6 @@
 package org.honton.chas.dependency.analyzescope;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
