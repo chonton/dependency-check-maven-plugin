@@ -71,7 +71,7 @@
     <!-- use com.github.github:site-maven-plugin instead of org.apache.maven.plugins:maven-site-plugin -->
     <maven.site.deploy.skip>true</maven.site.deploy.skip>
 
-    <maven.version>3.8.8</maven.version>
+    <maven.version>3.9.5</maven.version>
     <mockito.version>5.5.0</mockito.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
