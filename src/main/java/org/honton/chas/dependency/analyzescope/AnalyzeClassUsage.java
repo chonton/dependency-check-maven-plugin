@@ -1,5 +1,15 @@
 package org.honton.chas.dependency.analyzescope;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
+import org.honton.chas.analyzer.api.DependencyAnalyzer;
+import org.honton.chas.analyzer.api.LocationCollector;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,14 +17,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
-import org.honton.chas.analyzer.api.LocationCollector;
-import org.honton.chas.analyzer.api.DependencyAnalyzer;
 
 class AnalyzeClassUsage {
   // fake artifact to hold classes from unknown artifact,  will usually hold classes from the jvm
@@ -61,6 +63,10 @@ class AnalyzeClassUsage {
         new DefaultArtifactHandler());
   }
 
+  private static void logMissingFile(Log log, Artifact da) {
+    log.info(da.getGroupId() + ':' + da.getArtifactId() + ':' + da.getVersion() + " does not have file");
+  }
+
   /**
    * Add classNames available in a collection of Artifact to classNameToArtifact
    *
@@ -88,7 +94,12 @@ class AnalyzeClassUsage {
   }
 
   private boolean addClassesToArtifactMapping(Log log, Artifact artifact) {
-    Set<String> classNames = locationCollector.list(artifact.getFile().toPath(), log);
+    File file = artifact.getFile();
+    if (file == null) {
+      logMissingFile(log, artifact);
+      return false;
+    }
+    Set<String> classNames = locationCollector.list(file.toPath(), log);
 
     for (String className : classNames) {
       Artifact prior = classNameToArtifact.put(className, artifact);
@@ -123,8 +134,12 @@ class AnalyzeClassUsage {
    * @param artifact The artifact being examined
    */
   public void addUsedClassNames(Log log, Artifact artifact) {
-    Map<String, Set<String>> classDependencies =
-        dependencyAnalyzer.analyze(artifact.getFile().toPath(), log);
+    File file = artifact.getFile();
+    if (file == null) {
+      logMissingFile(log, artifact);
+      return;
+    }
+    Map<String, Set<String>> classDependencies = dependencyAnalyzer.analyze(file.toPath(), log);
     if (!classDependencies.isEmpty()) {
       usedDependencies.put(artifact, classDependencies);
       for (Map.Entry<String, Set<String>> entry : classDependencies.entrySet()) {
@@ -153,7 +168,14 @@ class AnalyzeClassUsage {
       log.debug("Found " + dependentClassName + " in " + dependent);
       Map<String, Set<String>> analyzedArtifact =
           usedDependencies.computeIfAbsent(
-              dependent, da -> dependencyAnalyzer.analyze(da.getFile().toPath(), log));
+              dependent, da -> {
+                File file = da.getFile();
+                if (file == null) {
+                  logMissingFile(log, da);
+                  return Map.of();
+                }
+                return dependencyAnalyzer.analyze(file.toPath(), log);
+              });
       Set<String> dependentClasses = analyzedArtifact.get(dependentClassName);
       if (dependentClasses != null) {
         resolveClass(log, dependent, dependentClassName, dependentClasses);
@@ -199,13 +221,17 @@ class AnalyzeClassUsage {
     }
   }
 
-  /** Remove any dependency from the declared-but-unused set that matches patterns */
+  /**
+   * Remove any dependency from the declared-but-unused set that matches patterns
+   */
   public void removeIgnoreUnusedDeclaredDependencies(
       List<String> ignoreUnusedDeclaredDependencies) {
     removeIgnored(declaredButUnused, ignoreUnusedDeclaredDependencies);
   }
 
-  /** Remove any dependency from the used-but-undeclared set that matches patterns */
+  /**
+   * Remove any dependency from the used-but-undeclared set that matches patterns
+   */
   public void removeIgnoredUsedUndeclaredDependencies(
       List<String> ignoredUsedUndeclaredDependencies) {
     usedButUndeclared.removeAll(impliedDependencies);
