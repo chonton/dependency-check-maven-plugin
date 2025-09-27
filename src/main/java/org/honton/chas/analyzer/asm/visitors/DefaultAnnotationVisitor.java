@@ -33,8 +33,7 @@ public class DefaultAnnotationVisitor extends AnnotationVisitor {
   /**
    * Constructor for DefaultAnnotationVisitor.
    *
-   * @param resultCollector a {@link
-   *     ResultCollector} object.
+   * @param resultCollector a {@link ResultCollector} object.
    */
   public DefaultAnnotationVisitor(ResultCollector resultCollector) {
     super(Opcodes.ASM9);

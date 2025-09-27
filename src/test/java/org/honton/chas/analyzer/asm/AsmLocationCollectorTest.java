@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import org.apache.maven.plugin.logging.Log;
 import org.honton.chas.analyzer.api.LocationCollector;
 import org.junit.jupiter.api.AfterEach;

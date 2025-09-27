@@ -23,8 +23,8 @@ import java.nio.file.Path;
 import java.util.Set;
 import org.apache.maven.plugin.logging.Log;
 import org.honton.chas.analyzer.api.ClassFileVisitorUtils;
-import org.honton.chas.analyzer.asm.visitors.CollectorClassFileVisitor;
 import org.honton.chas.analyzer.api.LocationCollector;
+import org.honton.chas.analyzer.asm.visitors.CollectorClassFileVisitor;
 
 public class AsmLocationCollector implements LocationCollector {
 

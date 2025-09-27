@@ -29,8 +29,7 @@ import org.honton.chas.analyzer.asm.visitors.DependencyClassFileVisitor;
 
 /** Factory for ClassFileVisitor */
 public class ClassFileVisitorFactory implements Function<String, ClassFileVisitor> {
-  @Getter
-  private final Map<String, Set<String>> dependencies = new HashMap<>();
+  @Getter private final Map<String, Set<String>> dependencies = new HashMap<>();
 
   /**
    * Create a ClassFileVisitor for the given className

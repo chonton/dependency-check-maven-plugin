@@ -23,9 +23,9 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 import org.apache.maven.plugin.logging.Log;
-import org.honton.chas.analyzer.spi.ClassFileVisitorFactory;
 import org.honton.chas.analyzer.api.ClassFileVisitorUtils;
 import org.honton.chas.analyzer.api.DependencyAnalyzer;
+import org.honton.chas.analyzer.spi.ClassFileVisitorFactory;
 
 public class AsmDependencyAnalyzer implements DependencyAnalyzer {
 

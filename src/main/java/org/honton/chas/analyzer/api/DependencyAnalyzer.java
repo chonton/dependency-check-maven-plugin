@@ -25,8 +25,7 @@ import java.util.Set;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Gets the set of classes referenced by a library given either a jar file or an exploded
- * directory.
+ * Gets the set of classes referenced by a library given either a jar file or an exploded directory.
  */
 public interface DependencyAnalyzer {
 

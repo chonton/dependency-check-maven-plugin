@@ -1,14 +1,5 @@
 package org.honton.chas.dependency.analyzescope;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
-import org.honton.chas.analyzer.api.DependencyAnalyzer;
-import org.honton.chas.analyzer.api.LocationCollector;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
+import org.honton.chas.analyzer.api.DependencyAnalyzer;
+import org.honton.chas.analyzer.api.LocationCollector;
 
 class AnalyzeClassUsage {
   // fake artifact to hold classes from unknown artifact,  will usually hold classes from the jvm
@@ -64,7 +63,8 @@ class AnalyzeClassUsage {
   }
 
   private static void logMissingFile(Log log, Artifact da) {
-    log.info(da.getGroupId() + ':' + da.getArtifactId() + ':' + da.getVersion() + " does not have file");
+    log.info(
+        da.getGroupId() + ':' + da.getArtifactId() + ':' + da.getVersion() + " does not have file");
   }
 
   /**
@@ -168,7 +168,8 @@ class AnalyzeClassUsage {
       log.debug("Found " + dependentClassName + " in " + dependent);
       Map<String, Set<String>> analyzedArtifact =
           usedDependencies.computeIfAbsent(
-              dependent, da -> {
+              dependent,
+              da -> {
                 File file = da.getFile();
                 if (file == null) {
                   logMissingFile(log, da);
@@ -221,17 +222,13 @@ class AnalyzeClassUsage {
     }
   }
 
-  /**
-   * Remove any dependency from the declared-but-unused set that matches patterns
-   */
+  /** Remove any dependency from the declared-but-unused set that matches patterns */
   public void removeIgnoreUnusedDeclaredDependencies(
       List<String> ignoreUnusedDeclaredDependencies) {
     removeIgnored(declaredButUnused, ignoreUnusedDeclaredDependencies);
   }
 
-  /**
-   * Remove any dependency from the used-but-undeclared set that matches patterns
-   */
+  /** Remove any dependency from the used-but-undeclared set that matches patterns */
   public void removeIgnoredUsedUndeclaredDependencies(
       List<String> ignoredUsedUndeclaredDependencies) {
     usedButUndeclared.removeAll(impliedDependencies);

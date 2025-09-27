@@ -38,8 +38,7 @@ public class DefaultFieldVisitor extends FieldVisitor {
    * Constructor for DefaultFieldVisitor.
    *
    * @param annotationVisitor a {@link org.objectweb.asm.AnnotationVisitor} object.
-   * @param resultCollector a {@link
-   *     ResultCollector} object.
+   * @param resultCollector a {@link ResultCollector} object.
    */
   public DefaultFieldVisitor(AnnotationVisitor annotationVisitor, ResultCollector resultCollector) {
     super(Opcodes.ASM9);

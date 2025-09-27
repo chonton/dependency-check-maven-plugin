@@ -69,7 +69,7 @@ public class AnalyzeTestMojo extends AbstractAnalyzeScopeMojo {
   @Override
   Collection<Artifact> impliedArtifacts() {
     Artifact mainArtifact = project.getArtifact();
-    File mainClasses= mainArtifact.getFile();
+    File mainClasses = mainArtifact.getFile();
     if (mainClasses == null || !mainClasses.exists()) {
       getLog().info("No main classes directory");
       return Collections.singletonList(testArtifact);

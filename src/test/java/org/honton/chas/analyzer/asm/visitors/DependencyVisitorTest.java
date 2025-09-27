@@ -37,7 +37,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
- class DependencyVisitorTest {
+class DependencyVisitorTest {
   private final ResultCollector resultCollector = new ResultCollector();
   private DefaultClassVisitor visitor;
   private MethodVisitor mv;
@@ -82,8 +82,9 @@ import org.objectweb.asm.signature.SignatureVisitor;
     // class a.b.c implements p.q.r, x.y.z
     visitor.visit(50, 0, "a/b/c", null, "java/lang/Object", new String[] {"p/q/r", "x/y/z"});
 
-    Assertions.assertEquals(Set.of("java.lang.Object", "p.q.r", "x.y.z"), resultCollector.getDependencies());
-   }
+    Assertions.assertEquals(
+        Set.of("java.lang.Object", "p.q.r", "x.y.z"), resultCollector.getDependencies());
+  }
 
   @Test
   void testVisitWithUnboundedClassTypeParameter() {
@@ -112,8 +113,8 @@ import org.objectweb.asm.signature.SignatureVisitor;
 
     visitor.visit(50, 0, "a/b/c", signature, "java/lang/Object", null);
 
-    Assertions.assertEquals(Set.of("java.lang.Object", "p.q.r", "x.y.z"), resultCollector.getDependencies());
-
+    Assertions.assertEquals(
+        Set.of("java.lang.Object", "p.q.r", "x.y.z"), resultCollector.getDependencies());
   }
 
   @Test
@@ -123,7 +124,8 @@ import org.objectweb.asm.signature.SignatureVisitor;
 
     visitor.visit(50, 0, "a/b/c", signature, "java/lang/Object", new String[] {"p.q.r"});
 
-    Assertions.assertEquals(Set.of("java.lang.Object", "p.q.r", "x.y.z"), resultCollector.getDependencies());
+    Assertions.assertEquals(
+        Set.of("java.lang.Object", "p.q.r", "x.y.z"), resultCollector.getDependencies());
   }
 
   @Test
@@ -132,7 +134,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
     String signature = "<T:Ljava/lang/Object;>Ljava/lang/Object;Lx/y/z<TT;>;";
 
     visitor.visit(50, 0, "a/b/c", signature, "java/lang/Object", new String[] {"x.y.z"});
-    
+
     Assertions.assertEquals(Set.of("java.lang.Object", "x.y.z"), resultCollector.getDependencies());
   }
 
@@ -518,7 +520,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
   @Test
   void testVisitJumpInsn() {
     mv.visitJumpInsn(Opcodes.IFEQ, new Label());
-    
+
     Assertions.assertEquals(Set.of(), resultCollector.getDependencies());
   }
 

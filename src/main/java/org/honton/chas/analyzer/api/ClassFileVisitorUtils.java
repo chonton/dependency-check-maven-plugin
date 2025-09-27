@@ -32,9 +32,7 @@ import lombok.experimental.UtilityClass;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.honton.chas.analyzer.spi.ClassFileVisitor;
 
-/**
- * Utility to visit classes in a library given either as a jar file or an exploded directory.
- */
+/** Utility to visit classes in a library given either as a jar file or an exploded directory. */
 @UtilityClass
 public final class ClassFileVisitorUtils {
 
@@ -48,7 +46,7 @@ public final class ClassFileVisitorUtils {
    * @param handler the method which is invoked upon any IOException; the String parameter is the
    *     className, if known
    */
-  public  void accept(
+  public void accept(
       Path path,
       Function<String, ClassFileVisitor> visitorFactory,
       BiConsumer<String, IOException> handler) {
@@ -62,7 +60,7 @@ public final class ClassFileVisitorUtils {
     }
   }
 
-  private  void acceptJar(
+  private void acceptJar(
       Path jar,
       Function<String, ClassFileVisitor> visitorFactory,
       BiConsumer<String, IOException> handler) {
@@ -73,7 +71,7 @@ public final class ClassFileVisitorUtils {
     }
   }
 
-  private  void acceptJar(InputStream is, Function<String, ClassFileVisitor> visitorFactory)
+  private void acceptJar(InputStream is, Function<String, ClassFileVisitor> visitorFactory)
       throws IOException {
     try (JarInputStream in = new JarInputStream(is)) {
       JarEntry entry;
@@ -88,7 +86,7 @@ public final class ClassFileVisitorUtils {
     }
   }
 
-  private  void acceptDirectory(
+  private void acceptDirectory(
       Path directory,
       Function<String, ClassFileVisitor> visitorFactory,
       BiConsumer<String, IOException> handler) {
@@ -106,7 +104,7 @@ public final class ClassFileVisitorUtils {
     }
   }
 
-  private  void acceptClassInDirectory(
+  private void acceptClassInDirectory(
       Path directory,
       String path,
       String className,
@@ -121,7 +119,7 @@ public final class ClassFileVisitorUtils {
     }
   }
 
-  private  String pathToClassName(String path) {
+  private String pathToClassName(String path) {
     return path.substring(0, path.length() - DOT_CLASS.length()).replace('/', '.');
   }
 }

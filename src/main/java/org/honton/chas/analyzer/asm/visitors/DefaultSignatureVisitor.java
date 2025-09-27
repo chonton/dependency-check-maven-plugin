@@ -34,8 +34,7 @@ public class DefaultSignatureVisitor extends SignatureVisitor {
   /**
    * Constructor for DefaultSignatureVisitor.
    *
-   * @param resultCollector a {@link
-   *     ResultCollector} object.
+   * @param resultCollector a {@link ResultCollector} object.
    */
   public DefaultSignatureVisitor(ResultCollector resultCollector) {
     super(Opcodes.ASM9);

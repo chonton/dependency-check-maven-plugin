@@ -57,7 +57,7 @@ class ResultCollectorTest {
   @Test
   void testInnerClassAsContainer() throws IOException {
     Set<String> dependencies = getDependencies(InnerClassCase.class);
-    dependencies.forEach(d -> Assertions.assertTrue(d.indexOf('$')<0));
+    dependencies.forEach(d -> Assertions.assertTrue(d.indexOf('$') < 0));
     Assertions.assertTrue(dependencies.contains("java.lang.System"));
   }
 }

@@ -25,12 +25,9 @@ import java.util.Set;
 import lombok.Getter;
 import org.honton.chas.analyzer.spi.ClassFileVisitor;
 
-/**
- * Simply collect the set of visited classes.
- */
+/** Simply collect the set of visited classes. */
 public class CollectorClassFileVisitor implements ClassFileVisitor {
-  @Getter
-  private final Set<String> classes= new HashSet<>();
+  @Getter private final Set<String> classes = new HashSet<>();
 
   public void visitClass(String className, InputStream in) {
     // inner classes have equivalent compilation requirement as container class

@@ -11,10 +11,10 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.honton.chas.analyzer.api.LocationCollector;
 import org.honton.chas.analyzer.api.DependencyAnalyzer;
-import org.honton.chas.analyzer.asm.AsmLocationCollector;
+import org.honton.chas.analyzer.api.LocationCollector;
 import org.honton.chas.analyzer.asm.AsmDependencyAnalyzer;
+import org.honton.chas.analyzer.asm.AsmLocationCollector;
 
 public abstract class AbstractAnalyzeScopeMojo extends AbstractMojo {
   /** The Maven project to analyze. */
@@ -30,8 +30,8 @@ public abstract class AbstractAnalyzeScopeMojo extends AbstractMojo {
   boolean skip;
 
   /**
-   * List of dependencies to ignore. Any dependency on this list will be excluded from
-   * the "declared but unused" and the "used but undeclared" lists. The filter syntax is:
+   * List of dependencies to ignore. Any dependency on this list will be excluded from the "declared
+   * but unused" and the "used but undeclared" lists. The filter syntax is:
    *
    * <pre>
    * [groupId]:[artifactId]:[type]:[version]

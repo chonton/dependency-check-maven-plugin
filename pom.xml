@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.honton.chas</groupId>
   <artifactId>dependency-check-maven-plugin</artifactId>
-
-  <version>1.2.0</version>
+  <version>1.2.1</version>
 
   <packaging>maven-plugin</packaging>
 
@@ -17,8 +15,9 @@
 
   <licenses>
     <license>
-      <name>Apache License, Version 2.0</name>
-      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+      <distribution>repo</distribution>
     </license>
   </licenses>
 
@@ -31,7 +30,7 @@
   </developers>
 
   <prerequisites>
-    <maven>3.8.0</maven>
+    <maven>${maven.version}</maven>
   </prerequisites>
 
   <scm>
@@ -44,7 +43,7 @@
 
     <repository>
       <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
 
     <snapshotRepository>
@@ -60,9 +59,10 @@
   </distributionManagement>
 
   <properties>
-    <junit.jupiter.version>5.10.0</junit.jupiter.version>
+    <git-code-format-maven-plugin.version>5.4</git-code-format-maven-plugin.version>
+    <junit.jupiter.version>5.13.4</junit.jupiter.version>
 
-    <maven.compiler.release>11</maven.compiler.release>
+    <maven.compiler.release>17</maven.compiler.release>
     <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
     <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
 
@@ -70,9 +70,8 @@
     <maven.deploy.skip>true</maven.deploy.skip>
     <!-- use com.github.github:site-maven-plugin instead of org.apache.maven.plugins:maven-site-plugin -->
     <maven.site.deploy.skip>true</maven.site.deploy.skip>
-
-    <maven.version>3.8.8</maven.version>
-    <mockito.version>5.5.0</mockito.version>
+    <maven.version>3.9.6</maven.version>
+    <mockito.version>5.20.0</mockito.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -117,20 +116,20 @@
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.9.0</version>
+      <version>3.15.1</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
-      <version>3.3.2</version>
+      <version>3.4.0</version>
     </dependency>
 
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>4.0.0</version>
+      <version>4.0.2</version>
     </dependency>
 
     <dependency>
@@ -164,13 +163,13 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>9.5</version>
+      <version>9.8</version>
     </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.30</version>
+      <version>1.18.42</version>
       <scope>provided</scope>
     </dependency>
 
@@ -183,24 +182,29 @@
         <plugin>
           <groupId>com.cosium.code</groupId>
           <artifactId>git-code-format-maven-plugin</artifactId>
-          <version>4.2</version>
+          <version>${git-code-format-maven-plugin.version}</version>
           <dependencies>
             <dependency>
-              <groupId>com.google.googlejavaformat</groupId>
+              <groupId>com.cosium.code</groupId>
               <artifactId>google-java-format</artifactId>
-              <version>1.17.0</version>
+              <version>${git-code-format-maven-plugin.version}</version>
             </dependency>
           </dependencies>
         </plugin>
 
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.3.1</version>
+          <version>3.3.2</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.11.0</version>
+          <version>3.13.0</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.6.1</version>
         </plugin>
 
         <plugin>
@@ -215,7 +219,7 @@
 
         <plugin>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.4</version>
         </plugin>
 
         <plugin>
@@ -225,22 +229,22 @@
 
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.4.1</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.6.0</version>
+          <version>3.6.3</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.9.0</version>
+          <version>3.12.0</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.4.5</version>
+          <version>3.5.0</version>
         </plugin>
 
         <plugin>
@@ -260,12 +264,12 @@
 
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.3.1</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>3.2.5</version>
         </plugin>
 
         <plugin>
@@ -342,7 +346,7 @@
 
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.21.0</version>
+        <version>3.27.0</version>
         <configuration>
           <compileSourceRoots>src/main/java</compileSourceRoots>
         </configuration>
@@ -363,14 +367,12 @@
       <plugin>
         <artifactId>maven-scm-publish-plugin</artifactId>
         <configuration>
-          <content>${project.reporting.outputDirectory}</content>
-          <pubScmUrl>scm:git:git@github.com:chonton/${project.artifactId}.git</pubScmUrl>
+          <content>target/site</content>
           <scmBranch>gh-pages</scmBranch>
           <tryUpdate>true</tryUpdate>
         </configuration>
         <executions>
           <execution>
-            <id>scm-publish</id>
             <goals>
               <goal>publish-scm</goal>
             </goals>
@@ -384,6 +386,7 @@
 
   <reporting>
     <plugins>
+
       <plugin>
         <artifactId>maven-plugin-plugin</artifactId>
       </plugin>
@@ -414,6 +417,7 @@
           </reportSet>
         </reportSets>
       </plugin>
+
     </plugins>
   </reporting>
 
@@ -470,14 +474,14 @@
           </plugin>
 
           <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.13</version>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.8.0</version>
             <extensions>true</extensions>
             <configuration>
-              <serverId>ossrh</serverId>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+              <autoPublish>true</autoPublish>
+              <publishingServerId>central</publishingServerId>
+              <waitUntil>published</waitUntil>
             </configuration>
           </plugin>
 

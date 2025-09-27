@@ -46,8 +46,7 @@ public class DefaultMethodVisitor extends MethodVisitor {
    *
    * @param annotationVisitor a {@link org.objectweb.asm.AnnotationVisitor} object.
    * @param signatureVisitor a {@link org.objectweb.asm.signature.SignatureVisitor} object.
-   * @param resultCollector a {@link
-   *     ResultCollector} object.
+   * @param resultCollector a {@link ResultCollector} object.
    */
   public DefaultMethodVisitor(
       AnnotationVisitor annotationVisitor,
