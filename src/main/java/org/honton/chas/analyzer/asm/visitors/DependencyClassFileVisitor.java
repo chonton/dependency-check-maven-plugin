@@ -20,10 +20,9 @@ package org.honton.chas.analyzer.asm.visitors;
  */
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Set;
 import org.codehaus.plexus.util.IOUtil;
-import org.honton.chas.analyzer.spi.ClassFileVisitor;
+import org.honton.chas.analyzer.spi.ClassFileAnalyzer;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -38,7 +37,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @see #getDependencies()
  */
-public class DependencyClassFileVisitor implements ClassFileVisitor {
+public class DependencyClassFileVisitor implements ClassFileAnalyzer {
   private final ResultCollector resultCollector;
 
   public DependencyClassFileVisitor() {
@@ -50,9 +49,9 @@ public class DependencyClassFileVisitor implements ClassFileVisitor {
   }
 
   /** {@inheritDoc} */
-  public void visitClass(String className, InputStream in) {
+  public void visitClass(String className, BytesSupplier byteSupplier) {
     try {
-      byte[] byteCode = IOUtil.toByteArray(in);
+      byte[] byteCode = IOUtil.toByteArray(byteSupplier);
       ClassReader reader = new ClassReader(byteCode);
 
       final Set<String> constantPoolClassRefs =

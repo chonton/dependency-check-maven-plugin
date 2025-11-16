@@ -28,7 +28,7 @@ import lombok.Getter;
 import org.honton.chas.analyzer.asm.visitors.DependencyClassFileVisitor;
 
 /** Factory for ClassFileVisitor */
-public class ClassFileVisitorFactory implements Function<String, ClassFileVisitor> {
+public class ClassFileVisitorFactory implements Function<String, ClassFileAnalyzer> {
   @Getter private final Map<String, Set<String>> dependencies = new HashMap<>();
 
   /**
@@ -38,7 +38,7 @@ public class ClassFileVisitorFactory implements Function<String, ClassFileVisito
    * @return the ClassFileVisitor acting as a dependency collector
    */
   @Override
-  public ClassFileVisitor apply(String className) {
+  public ClassFileAnalyzer apply(String className) {
     int dollarIdx = className.indexOf('$');
     String stubName = dollarIdx < 0 ? className : className.substring(0, dollarIdx);
     return new DependencyClassFileVisitor(

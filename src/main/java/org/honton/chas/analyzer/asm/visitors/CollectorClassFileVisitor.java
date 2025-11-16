@@ -19,17 +19,16 @@ package org.honton.chas.analyzer.asm.visitors;
  * under the License.
  */
 
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
-import org.honton.chas.analyzer.spi.ClassFileVisitor;
+import org.honton.chas.analyzer.spi.ClassFileAnalyzer;
 
 /** Simply collect the set of visited classes. */
-public class CollectorClassFileVisitor implements ClassFileVisitor {
+public class CollectorClassFileVisitor implements ClassFileAnalyzer {
   @Getter private final Set<String> classes = new HashSet<>();
 
-  public void visitClass(String className, InputStream in) {
+  public void visitClass(String className, BytesSupplier byteSupplier) {
     // inner classes have equivalent compilation requirement as container class
     if (className.indexOf('$') < 0) {
       classes.add(className);

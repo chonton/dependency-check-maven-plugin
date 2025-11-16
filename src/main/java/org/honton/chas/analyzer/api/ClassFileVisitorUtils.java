@@ -30,7 +30,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import lombok.experimental.UtilityClass;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.honton.chas.analyzer.spi.ClassFileVisitor;
+import org.honton.chas.analyzer.spi.ClassFileAnalyzer;
 
 /** Utility to visit classes in a library given either as a jar file or an exploded directory. */
 @UtilityClass
@@ -48,7 +48,7 @@ public final class ClassFileVisitorUtils {
    */
   public void accept(
       Path path,
-      Function<String, ClassFileVisitor> visitorFactory,
+      Function<String, ClassFileAnalyzer> visitorFactory,
       BiConsumer<String, IOException> handler) {
     if (Files.isDirectory(path)) {
       acceptDirectory(path, visitorFactory, handler);
@@ -62,7 +62,7 @@ public final class ClassFileVisitorUtils {
 
   private void acceptJar(
       Path jar,
-      Function<String, ClassFileVisitor> visitorFactory,
+      Function<String, ClassFileAnalyzer> visitorFactory,
       BiConsumer<String, IOException> handler) {
     try {
       acceptJar(Files.newInputStream(jar), visitorFactory);
@@ -71,7 +71,7 @@ public final class ClassFileVisitorUtils {
     }
   }
 
-  private void acceptJar(InputStream is, Function<String, ClassFileVisitor> visitorFactory)
+  private void acceptJar(InputStream is, Function<String, ClassFileAnalyzer> visitorFactory)
       throws IOException {
     try (JarInputStream in = new JarInputStream(is)) {
       JarEntry entry;
@@ -80,7 +80,7 @@ public final class ClassFileVisitorUtils {
         // ignore files like package-info.class and module-info.class
         if (path.endsWith(DOT_CLASS) && path.indexOf('-') == -1) {
           String className = pathToClassName(path);
-          visitorFactory.apply(className).visitClass(className, in);
+          visitorFactory.apply(className).visitClass(className, in::readAllBytes);
         }
       }
     }
@@ -88,7 +88,7 @@ public final class ClassFileVisitorUtils {
 
   private void acceptDirectory(
       Path directory,
-      Function<String, ClassFileVisitor> visitorFactory,
+      Function<String, ClassFileAnalyzer> visitorFactory,
       BiConsumer<String, IOException> handler) {
     DirectoryScanner scanner = new DirectoryScanner();
 
@@ -108,15 +108,10 @@ public final class ClassFileVisitorUtils {
       Path directory,
       String path,
       String className,
-      ClassFileVisitor visitor,
+      ClassFileAnalyzer visitor,
       BiConsumer<String, IOException> handler) {
     Path classLocation = directory.resolve(path);
-
-    try (InputStream in = Files.newInputStream(classLocation)) {
-      visitor.visitClass(className, in);
-    } catch (IOException ioException) {
-      handler.accept(path, ioException);
-    }
+    visitor.visitClass(className, () -> Files.readAllBytes(classLocation));
   }
 
   private String pathToClassName(String path) {

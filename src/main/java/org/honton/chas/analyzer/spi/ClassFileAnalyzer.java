@@ -19,19 +19,21 @@ package org.honton.chas.analyzer.spi;
  * under the License.
  */
 
-import java.io.InputStream;
+import java.io.IOException;
 
 /**
- * ClassFileVisitor interface.
- *
- * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
+ * Analyze a class
  */
-public interface ClassFileVisitor {
+public interface ClassFileAnalyzer {
+  interface BytesSupplier {
+    byte[] contents() throws IOException;
+  }
+
   /**
-   * visitClass.
+   * Analyze the given class
    *
-   * @param className a {@link String} object.
-   * @param in a {@link InputStream} object.
+   * @param className    the class's name
+   * @param byteSupplier the class's content
    */
-  void visitClass(String className, InputStream in);
+  void visitClass(String className, BytesSupplier byteSupplier);
 }

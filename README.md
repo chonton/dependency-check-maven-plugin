@@ -43,7 +43,7 @@ as an implicit wildcard.
 ## Requirements
 
 - Maven 3.9.6 or later
-- Java 17 or later
+- Java 24 or later (earlier JVM are supported by this plugin's version 1.2.1 or earlier)
 
 ## Typical Maven Use
 
@@ -55,7 +55,7 @@ as an implicit wildcard.
     <plugin>
       <groupId>org.honton.chas</groupId>
       <artifactId>dependency-check-maven-plugin</artifactId>
-      <version>1.2.1</version>
+      <version>2.0.0</version>
       <executions>
         <execution>
           <id>check-main-dependencies</id>
@@ -93,5 +93,5 @@ as an implicit wildcard.
 ## Typical command line use
 
 ```shell
-mvn org.honton.chas:dependency-check-maven-plugin:1.2.1:main
+mvn org.honton.chas:dependency-check-maven-plugin:2.0.0:main
 ```
