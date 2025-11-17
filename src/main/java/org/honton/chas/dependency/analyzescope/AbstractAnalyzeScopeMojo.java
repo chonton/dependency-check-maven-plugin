@@ -11,10 +11,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.honton.chas.analyzer.api.DependencyAnalyzer;
-import org.honton.chas.analyzer.api.LocationCollector;
-import org.honton.chas.analyzer.asm.AsmDependencyAnalyzer;
-import org.honton.chas.analyzer.asm.AsmLocationCollector;
 
 public abstract class AbstractAnalyzeScopeMojo extends AbstractMojo {
   /** The Maven project to analyze. */
@@ -77,9 +73,6 @@ public abstract class AbstractAnalyzeScopeMojo extends AbstractMojo {
    * artifacts.
    */
   @Parameter private List<String> ignoreUnusedDeclaredDependencies;
-
-  private LocationCollector locationCollector = new AsmLocationCollector();
-  private DependencyAnalyzer dependencyAnalyzer = new AsmDependencyAnalyzer();
 
   // Mojo methods -----------------------------------------------------------
 
@@ -144,7 +137,7 @@ public abstract class AbstractAnalyzeScopeMojo extends AbstractMojo {
       artifact.setFile(new File(outputDirectory));
     }
 
-    AnalyzeClassUsage analyzer = new AnalyzeClassUsage(locationCollector, dependencyAnalyzer);
+    AnalyzeClassUsage analyzer = new AnalyzeClassUsage();
     analyzer.addImpliedDependencies(getLog(), impliedArtifacts());
 
     Set<String> acceptableScopes = getDeclaredScopes();

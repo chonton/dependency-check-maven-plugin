@@ -1,6 +1,7 @@
 package org.honton.chas.dependency.analyzescope;
 
 import java.io.File;
+import java.lang.constant.ClassDesc;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,33 +15,29 @@ import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
-import org.honton.chas.analyzer.api.DependencyAnalyzer;
-import org.honton.chas.analyzer.api.LocationCollector;
+import org.honton.chas.dependency.collector.DependencyCollector;
+import org.honton.chas.dependency.collector.LocationCollector;
 
 class AnalyzeClassUsage {
+
   // fake artifact to hold classes from unknown artifact,  will usually hold classes from the jvm
   // rt.jar
   private static final Artifact TRANSITIVE = createTransitive();
 
-  private final LocationCollector locationCollector;
-  private final DependencyAnalyzer dependencyAnalyzer;
   // className to artifact mapping
-  private final Map<String, Artifact> classNameToArtifact;
+  private final Map<ClassDesc, Artifact> classNameToArtifact;
   // artifact to analyzed classes
-  private final Map<Artifact, Map<String, Set<String>>> usedDependencies;
+  private final Map<Artifact, Map<ClassDesc, Set<ClassDesc>>> usedDependencies;
   // resolved className to artifact mapping
-  private final Map<String, Artifact> resolvedClasses;
+  private final Map<ClassDesc, Artifact> resolvedClasses;
   // classNames provided by multiple artifacts
-  private final Map<String, List<Artifact>> multipleDefinition;
+  private final Map<ClassDesc, List<Artifact>> multipleDefinition;
   // dependencies that are implied by context
   private final List<Artifact> impliedDependencies;
   private final Set<Artifact> declaredButUnused;
   private final Set<Artifact> usedButUndeclared;
 
-  AnalyzeClassUsage(LocationCollector locationCollector, DependencyAnalyzer dependencyAnalyzer) {
-    this.locationCollector = locationCollector;
-    this.dependencyAnalyzer = dependencyAnalyzer;
-
+  AnalyzeClassUsage() {
     classNameToArtifact = new HashMap<>();
     usedDependencies = new HashMap<>();
     resolvedClasses = new HashMap<>();
@@ -65,6 +62,12 @@ class AnalyzeClassUsage {
   private static void logMissingFile(Log log, Artifact da) {
     log.info(
         da.getGroupId() + ':' + da.getArtifactId() + ':' + da.getVersion() + " does not have file");
+  }
+
+  private static String className(ClassDesc cd) {
+    return cd.packageName().isEmpty()
+        ? cd.displayName()
+        : cd.packageName() + '.' + cd.displayName();
   }
 
   /**
@@ -99,15 +102,15 @@ class AnalyzeClassUsage {
       logMissingFile(log, artifact);
       return false;
     }
-    Set<String> classNames = locationCollector.list(file.toPath(), log);
+    Set<ClassDesc> classNames = new LocationCollector(file.toPath(), log).list();
 
-    for (String className : classNames) {
+    for (ClassDesc className : classNames) {
       Artifact prior = classNameToArtifact.put(className, artifact);
       if (prior != null) {
         List<Artifact> artifacts =
             multipleDefinition.computeIfAbsent(
                 className,
-                cn -> {
+                _ -> {
                   List<Artifact> multiple = new ArrayList<>();
                   multiple.add(prior);
                   return multiple;
@@ -139,34 +142,35 @@ class AnalyzeClassUsage {
       logMissingFile(log, artifact);
       return;
     }
-    Map<String, Set<String>> classDependencies = dependencyAnalyzer.analyze(file.toPath(), log);
+    Map<ClassDesc, Set<ClassDesc>> classDependencies =
+        new DependencyCollector(file.toPath(), log).getClassDependencies();
     if (!classDependencies.isEmpty()) {
       usedDependencies.put(artifact, classDependencies);
-      for (Map.Entry<String, Set<String>> entry : classDependencies.entrySet()) {
+      for (Map.Entry<ClassDesc, Set<ClassDesc>> entry : classDependencies.entrySet()) {
         resolveClass(log, artifact, entry.getKey(), entry.getValue());
       }
     }
   }
 
   private void resolveClass(
-      Log log, Artifact artifact, String className, Set<String> dependentClassNames) {
+      Log log, Artifact artifact, ClassDesc className, Set<ClassDesc> dependentClassDescs) {
     Artifact prior = resolvedClasses.put(className, artifact);
     if (prior != null) {
       if (!prior.equals(artifact)) {
         log.error("Duplicate artifact for " + className + "; " + prior + " and " + artifact);
       }
     } else {
-      for (String dependentClassName : dependentClassNames) {
-        resolveDependentClass(log, dependentClassName);
+      for (ClassDesc dependentClassDesc : dependentClassDescs) {
+        resolveDependentClass(log, dependentClassDesc);
       }
     }
   }
 
-  private void resolveDependentClass(Log log, String dependentClassName) {
-    Artifact dependent = findDependency(log, dependentClassName);
+  private void resolveDependentClass(Log log, ClassDesc dependentClassDesc) {
+    Artifact dependent = findDependency(log, dependentClassDesc);
     if (dependent != null) {
-      log.debug("Found " + dependentClassName + " in " + dependent);
-      Map<String, Set<String>> analyzedArtifact =
+      log.debug("Found " + dependentClassDesc + " in " + dependent);
+      Map<ClassDesc, Set<ClassDesc>> analyzedArtifact =
           usedDependencies.computeIfAbsent(
               dependent,
               da -> {
@@ -175,26 +179,27 @@ class AnalyzeClassUsage {
                   logMissingFile(log, da);
                   return Map.of();
                 }
-                return dependencyAnalyzer.analyze(file.toPath(), log);
+                return new DependencyCollector(file.toPath(), log).getClassDependencies();
               });
-      Set<String> dependentClasses = analyzedArtifact.get(dependentClassName);
+      Set<ClassDesc> dependentClasses = analyzedArtifact.get(dependentClassDesc);
       if (dependentClasses != null) {
-        resolveClass(log, dependent, dependentClassName, dependentClasses);
+        resolveClass(log, dependent, dependentClassDesc, dependentClasses);
       }
     }
   }
 
-  private Artifact findDependency(Log log, String dependentClassName) {
-    Artifact dependent = classNameToArtifact.get(dependentClassName);
+  private Artifact findDependency(Log log, ClassDesc dependentClassDesc) {
+    Artifact dependent = classNameToArtifact.get(dependentClassDesc);
     if (dependent != null) {
       return dependent.equals(TRANSITIVE) ? null : dependent;
     }
 
-    if (!dependentClassName.startsWith("java.") && !dependentClassName.startsWith("javax.")) {
-      log.debug("Could not find artifact containing " + dependentClassName);
+    String packageName = dependentClassDesc.packageName();
+    if (!packageName.equals("java") && !packageName.equals("javax")) {
+      log.debug("Could not find artifact containing " + dependentClassDesc);
     }
-    resolvedClasses.put(dependentClassName, TRANSITIVE);
-    classNameToArtifact.put(dependentClassName, TRANSITIVE);
+    resolvedClasses.put(dependentClassDesc, TRANSITIVE);
+    classNameToArtifact.put(dependentClassDesc, TRANSITIVE);
     return null;
   }
 
@@ -231,7 +236,7 @@ class AnalyzeClassUsage {
   /** Remove any dependency from the used-but-undeclared set that matches patterns */
   public void removeIgnoredUsedUndeclaredDependencies(
       List<String> ignoredUsedUndeclaredDependencies) {
-    usedButUndeclared.removeAll(impliedDependencies);
+    impliedDependencies.forEach(usedButUndeclared::remove);
     removeIgnored(usedButUndeclared, ignoredUsedUndeclaredDependencies);
   }
 
@@ -251,8 +256,8 @@ class AnalyzeClassUsage {
     if (multipleDefinition.isEmpty()) {
       return false;
     }
-    for (Map.Entry<String, List<Artifact>> definition : multipleDefinition.entrySet()) {
-      log.warn("Multiple definitions of " + definition.getKey());
+    for (Map.Entry<ClassDesc, List<Artifact>> definition : multipleDefinition.entrySet()) {
+      log.warn("Multiple definitions of " + className(definition.getKey()));
       for (Artifact location : definition.getValue()) {
         log.warn("    " + location);
       }

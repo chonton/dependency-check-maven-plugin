@@ -62,7 +62,7 @@
     <git-code-format-maven-plugin.version>5.4</git-code-format-maven-plugin.version>
     <junit.jupiter.version>5.13.4</junit.jupiter.version>
 
-    <maven.compiler.release>24</maven.compiler.release>
+    <maven.compiler.release>25</maven.compiler.release>
     <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
     <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
 
@@ -74,6 +74,7 @@
     <mockito.version>5.20.0</mockito.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <lombok.version>1.18.42</lombok.version>
   </properties>
 
   <dependencies>
@@ -163,7 +164,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.42</version>
+      <version>${lombok.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -188,57 +189,57 @@
 
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.3.2</version>
+          <version>3.5.0</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.13.0</version>
+          <version>3.14.1</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.6.1</version>
+          <version>3.9.0</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>3.1.4</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.4.1</version>
+          <version>3.6.2</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>3.2.4</version>
+          <version>3.2.8</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>3.1.4</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.4.1</version>
+          <version>3.5.0</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.6.3</version>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-plugin-plugin</artifactId>
           <version>3.12.0</version>
         </plugin>
 
         <plugin>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.15.2</version>
+        </plugin>
+
+        <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.9.0</version>
         </plugin>
 
         <plugin>
@@ -248,12 +249,12 @@
 
         <plugin>
           <artifactId>maven-scm-publish-plugin</artifactId>
-          <version>3.2.1</version>
+          <version>3.3.0</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.12.1</version>
+          <version>3.21.0</version>
         </plugin>
 
         <plugin>
@@ -263,7 +264,7 @@
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.2.5</version>
+          <version>3.5.4</version>
         </plugin>
 
         <plugin>
@@ -290,6 +291,19 @@
             <phase>validate</phase>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -340,7 +354,7 @@
 
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.27.0</version>
+        <version>3.28.0</version>
         <configuration>
           <compileSourceRoots>src/main/java</compileSourceRoots>
         </configuration>
